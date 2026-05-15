@@ -1,0 +1,14 @@
+{
+  "name": "user-db-mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node ./userDbTools/userDbServer.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "dotenv": "^17.4.2",
+    "express": "^4.21.2",
+    "mongoose": "^8.16.0"
+  }
+}
