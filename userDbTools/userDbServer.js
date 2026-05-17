@@ -206,14 +206,10 @@ app.get("/mcp", async (req, res) => {
 });
 
 /* ---------------- HANDLE CLIENT MESSAGES ---------------- */
-app.post("/mcp/messages", express.json(), async (req, res) => {
+app.post("/mcp/messages", async (req, res) => {
   const sessionId = req.query.sessionId;
   const transport = transports[sessionId];
-
-  if (!transport) {
-    return res.status(400).send("No transport found for session");
-  }
-
+  if (!transport) return res.status(400).send("No transport found for session");
   await transport.handlePostMessage(req, res);
 });
 
