@@ -85,6 +85,17 @@ const TOOLS = [
       required: ["name"],
     },
   },
+  {
+    name: "check_duplicate_user_name",
+    description: "Check if a username already exists in the database to prevent duplicates",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "The username to check for duplicates" },
+      },
+      required: ["name"],
+    },
+  },
 ];
 
 /* ---------------- TOOL HANDLER ---------------- */
@@ -166,6 +177,31 @@ async function handleToolCall(request) {
       }
       await User.findByIdAndDelete(user._id);
       return { content: [{ type: "text", text: `User "${args.name}" deleted successfully` }] };
+    }
+
+    case "check_duplicate_user_name": {
+      const safeName = args.name.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const existing = await User.findOne({
+        name: { $regex: new RegExp(`^${safeName}$`, "i") },
+      });
+      if (existing) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `⚠️ Duplicate found: User "${existing.name}" already exists with age ${existing.age} and height ${existing.height}cm (ID: ${existing._id}).`,
+            },
+          ],
+        };
+      }
+      return {
+        content: [
+          {
+            type: "text",
+            text: `✅ Name "${args.name.trim()}" is available. No duplicate user found.`,
+          },
+        ],
+      };
     }
 
     default:
